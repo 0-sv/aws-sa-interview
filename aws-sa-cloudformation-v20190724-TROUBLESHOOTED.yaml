@@ -152,7 +152,7 @@ Resources:
     SAelb:
       Type: AWS::ElasticLoadBalancing::LoadBalancer
       Properties:
-        Subnets: [!Ref 'PublicSubnetB']
+        Subnets: [!Ref 'PublicSubnetA', !Ref 'PublicSubnetB']
         Instances: [!Ref 'SAInstance1']
         SecurityGroups: [!Ref 'SASGELB']
         Listeners:
@@ -162,7 +162,7 @@ Resources:
         HealthCheck:
           HealthyThreshold: '2'
           Interval: '15'
-          Target: TCP:443
+          Target: HTTP:80/demo.html
           Timeout: '5'
           UnhealthyThreshold: '2'
         Tags:
@@ -175,6 +175,12 @@ Resources:
       Type: AWS::EC2::SecurityGroup
       Properties:
         GroupDescription: SA Assignment - ELB security group
+        SecurityGroupIngress:
+          - Description: Accessible by the internet
+            CidrIp: 0.0.0.0/0
+            FromPort: 80
+            IpProtocol: tcp
+            ToPort: 80
         VpcId: !Ref 'SAVPC'
         Tags:
           - Key: environment
@@ -186,6 +192,12 @@ Resources:
       Type: AWS::EC2::SecurityGroup
       Properties:
         GroupDescription: SA Assignment - App server security group
+        SecurityGroupIngress:
+          - Description: Accessible by SASGELB
+            FromPort: 80
+            IpProtocol: tcp
+            SourceSecurityGroupName: !Ref 'SASGELB'
+            ToPort: 80
         VpcId: !Ref 'SAVPC'
         Tags:
           - Key: environment
