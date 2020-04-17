@@ -196,7 +196,7 @@ Resources:
           - Description: Accessible by SASGELB
             FromPort: 80
             IpProtocol: tcp
-            SourceSecurityGroupName: !Ref 'SASGELB'
+            SourceSecurityGroupId: !Ref 'SASGELB'
             ToPort: 80
         VpcId: !Ref 'SAVPC'
         Tags:
