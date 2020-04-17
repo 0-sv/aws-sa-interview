@@ -1,0 +1,283 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+
+  AWS CloudFormation SA Assignment - WARNING: You will be billed for the
+  AWS resources used if you create a stack from this template and consume all your
+  promotional credit. 
+
+  We recommend you create a billing alert. Once you submit your
+  answers delete the CloudFormation stack and terminate any other resources launched
+  in relation to this exercise. 
+
+  Feel free to do that as soon as you have submitted
+  your document and before your interview.
+
+Parameters:
+
+
+  CandidateName:
+    Description: 'Please input your first and last name:'
+    Type: String
+    MaxLength: '50'
+    MinLength: '3'
+    ConstraintDescription: Please input your full name.
+
+Resources:
+
+
+    SAVPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: 10.0.0.0/16
+        InstanceTenancy: default
+        EnableDnsSupport: 'true'
+        EnableDnsHostnames: 'true'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [SAVPC, !Ref 'CandidateName']]
+
+    PublicSubnetA:
+      Type: AWS::EC2::Subnet
+      Properties:
+        CidrBlock: 10.0.0.0/24
+        AvailabilityZone: eu-west-1a
+        MapPublicIpOnLaunch: 'True'
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PublicSubnetA, !Ref 'CandidateName']]
+
+    PublicSubnetB:
+      Type: AWS::EC2::Subnet
+      Properties:
+        CidrBlock: 10.0.1.0/24
+        AvailabilityZone: eu-west-1b
+        MapPublicIpOnLaunch: 'True'
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PublicSubnetB, !Ref 'CandidateName']]
+
+    PrivateSubnetA:
+      Type: AWS::EC2::Subnet
+      Properties:
+        CidrBlock: 10.0.2.0/24
+        AvailabilityZone: eu-west-1a
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PrivateSubnetA, !Ref 'CandidateName']]
+
+    PrivateSubnetB:
+      Type: AWS::EC2::Subnet
+      Properties:
+        CidrBlock: 10.0.3.0/24
+        AvailabilityZone: eu-west-1b
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PrivateSubnetB, !Ref 'CandidateName']]
+
+    SAIGW:
+      Type: AWS::EC2::InternetGateway
+      Properties:
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [IGW, !Ref 'CandidateName']]
+
+    SANetworkACL:
+      Type: AWS::EC2::NetworkAcl
+      Properties:
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [NACL, !Ref 'CandidateName']]
+
+    SARoutePublic:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PublicRoute, !Ref 'CandidateName']]
+
+    SARoutePrivate:
+      Type: AWS::EC2::RouteTable
+      Properties:
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [PrivateRoute, !Ref 'CandidateName']]
+
+    SAInstance1:
+      Type: AWS::EC2::Instance
+      Properties:
+        DisableApiTermination: 'false'
+        InstanceInitiatedShutdownBehavior: stop
+        ImageId: ami-047bb4163c506cd98
+        InstanceType: t2.micro
+        Monitoring: 'false'
+        UserData: IyEvYmluL2Jhc2gNCnl1bSB1cGRhdGUgLXkNCnl1bSBpbnN0YWxsIC15IGh0dHBkMjQNCnNlcnZpY2UgaHR0cGQgc3RhcnQNCmNoa2NvbmZpZyBodHRwZCBvbg0KZ3JvdXBhZGQgd3d3DQp1c2VybW9kIC1hIC1HIHd3dyBlYzItdXNlcg0KY2hvd24gLVIgcm9vdDp3d3cgL3Zhci93d3cNCmNobW9kIDI3NzUgL3Zhci93d3cNCmZpbmQgL3Zhci93d3cgLXR5cGUgZCAtZXhlYyBjaG1vZCAyNzc1IHt9ICsNCmZpbmQgL3Zhci93d3cgLXR5cGUgZiAtZXhlYyBjaG1vZCAwNjY0IHt9ICsNCmVjaG8gJzxodG1sPjxoZWFkPjx0aXRsZT5TdWNjZXNzITwvdGl0bGU+PC9oZWFkPjxib2R5PjxpZnJhbWUgd2lkdGg9IjU2MCIgaGVpZ2h0PSIzMTUiIHNyYz0iaHR0cHM6Ly93d3cueW91dHViZS5jb20vZW1iZWQvSnMyMXhLTUZkd3ciIGZyYW1lYm9yZGVyPSIwIiBhbGxvd2Z1bGxzY3JlZW4+PC9pZnJhbWU+PC9ib2R5PjwvaHRtbD4nID4gL3Zhci93d3cvaHRtbC9kZW1vLmh0bWw=
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [Instance1, !Ref 'CandidateName']]
+        NetworkInterfaces:
+        - AssociatePublicIpAddress: 'true'
+          DeleteOnTermination: 'true'
+          Description: Primary network interface
+          DeviceIndex: 0
+          SubnetId: !Ref 'PublicSubnetA'
+          GroupSet: [!Ref 'SASGapp']
+          
+    SAelb:
+      Type: AWS::ElasticLoadBalancing::LoadBalancer
+      Properties:
+        Subnets: [!Ref 'PublicSubnetB']
+        Instances: [!Ref 'SAInstance1']
+        SecurityGroups: [!Ref 'SASGELB']
+        Listeners:
+        - LoadBalancerPort: '80'
+          InstancePort: '80'
+          Protocol: HTTP
+        HealthCheck:
+          HealthyThreshold: '2'
+          Interval: '15'
+          Target: TCP:443
+          Timeout: '5'
+          UnhealthyThreshold: '2'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: !Join ['-', [ELB, !Ref 'CandidateName']]
+
+    SASGELB:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SA Assignment - ELB security group
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: ELBSecurityGroup
+
+    SASGapp:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        GroupDescription: SA Assignment - App server security group
+        VpcId: !Ref 'SAVPC'
+        Tags:
+          - Key: environment
+            Value: sa-assignment
+          - Key: Name
+            Value: AppServerSecurityGroup
+
+    SANACLEntry1:
+      Type: AWS::EC2::NetworkAclEntry
+      Properties:
+        CidrBlock: 0.0.0.0/0
+        Egress: 'true'
+        Protocol: '-1'
+        RuleAction: allow
+        RuleNumber: '100'
+        NetworkAclId: !Ref 'SANetworkACL'
+
+    SANACLEntry2:
+      Type: AWS::EC2::NetworkAclEntry
+      Properties:
+        CidrBlock: 0.0.0.0/0
+        Protocol: '-1'
+        RuleAction: allow
+        RuleNumber: '100'
+        NetworkAclId: !Ref 'SANetworkACL'
+
+    subnetacl1:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+        NetworkAclId: !Ref 'SANetworkACL'
+        SubnetId: !Ref 'PublicSubnetA'
+
+    subnetacl2:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+        NetworkAclId: !Ref 'SANetworkACL'
+        SubnetId: !Ref 'PublicSubnetB'
+
+    subnetacl3:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+        NetworkAclId: !Ref 'SANetworkACL'
+        SubnetId: !Ref 'PrivateSubnetA'
+
+    subnetacl4:
+      Type: AWS::EC2::SubnetNetworkAclAssociation
+      Properties:
+        NetworkAclId: !Ref 'SANetworkACL'
+        SubnetId: !Ref 'PrivateSubnetB'
+
+    SAIGWAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        VpcId: !Ref 'SAVPC'
+        InternetGatewayId: !Ref 'SAIGW'
+
+    subnetRoutePublicA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref 'SARoutePublic'
+        SubnetId: !Ref 'PublicSubnetA'
+
+    subnetRoutePublicB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref 'SARoutePublic'
+        SubnetId: !Ref 'PublicSubnetB'
+
+    subnetRoutePrivateA:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref 'SARoutePrivate'
+        SubnetId: !Ref 'PrivateSubnetA'
+
+    subnetRoutePrivateB:
+      Type: AWS::EC2::SubnetRouteTableAssociation
+      Properties:
+        RouteTableId: !Ref 'SARoutePrivate'
+        SubnetId: !Ref 'PrivateSubnetB'
+
+    publicroute:
+      Type: AWS::EC2::Route
+      Properties:
+        DestinationCidrBlock: 0.0.0.0/0
+        RouteTableId: !Ref 'SARoutePublic'
+        GatewayId: !Ref 'SAIGW'
+      DependsOn: SAIGW
+
+    
+Outputs:
+
+
+  LoadBalancerDNSName:
+    Description: The DNSName of the load balancer
+    Value: !GetAtt SAelb.DNSName
