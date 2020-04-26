@@ -152,7 +152,7 @@ Resources:
     SAelb:
       Type: AWS::ElasticLoadBalancing::LoadBalancer
       Properties:
-        Subnets: [!Ref 'PublicSubnetA', !Ref 'PublicSubnetB']
+        Subnets: [!Ref 'PublicSubnetA']
         Instances: [!Ref 'SAInstance1']
         SecurityGroups: [!Ref 'SASGELB']
         Listeners:
